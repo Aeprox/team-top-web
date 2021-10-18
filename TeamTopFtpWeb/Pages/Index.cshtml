@@ -1,0 +1,142 @@
+﻿@page "{url}"
+@model IndexModel
+@using TeamTopFtpWeb.Models;
+@{
+    ViewData["Title"] = "TeamsexyWeb";
+}
+
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            @{string thingy = Model.FileStructure.FolderName ?? Model.FileStructure.Files.SingleOrDefault().Name;
+                if (thingy == "")
+                {
+                    <li class="breadcrumb-item active" aria-current="page">Home</li>
+                }
+                else
+                {
+                    
+                    <li class="breadcrumb-item" aria-current="page"><a href="/">Home</a></li>
+                    var splitPaths = thingy.Trim('/').Split('/').ToArray();
+                    string url = "";
+                    for (var i = 0; i < splitPaths.Length; i++)
+                    {
+                        if (i == splitPaths.Length-1)
+                        {
+                            url += splitPaths[i]+"/";
+                            <li class="breadcrumb-item active" aria-current="page">
+                                @splitPaths[i]
+                            </li>
+                        }
+                        else
+                        {
+                            url += splitPaths[i]+"/";
+                            <li class="breadcrumb-item" aria-current="page">
+                                <a href="/@url">@splitPaths[i]</a>
+                            </li>
+                        }
+                    }
+                }
+            }
+        </ol>
+    </nav>
+
+@if (Model.FileStructure.Files.Count == 1 && Model.FileStructure.SubDirectories.Count == 0)
+{
+    var file = Model.FileStructure.Files.Single();
+<h3>@file.Name</h3>
+
+<div class="text-center">
+    @if (file.Name.EndsWith("mp4") ||
+     file.Name.EndsWith("MP4"))
+    {
+        <video src="@file.Uri.AbsoluteUri" width="640" height="480" preload="none" controls></video>
+    }
+    else if (file.Name.EndsWith("JPG")
+        || file.Name.EndsWith("gif")
+        || file.Name.EndsWith("jpg")
+        || file.Name.EndsWith("jpeg"))
+    {
+        <div style="max-width:800px class="text-center">
+            <a href="@file.Uri.AbsoluteUri"><img class="img-fluid" src="@file.Uri.AbsoluteUri" /></a>
+        </div>
+        <a href="@file.Uri.AbsoluteUri">Download file</a>
+    }
+    else
+    {
+        <a href="@file.Uri.AbsoluteUri">Download file</a>
+    }
+</div>
+ }
+   
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Path</th>
+            <th scope="col">Size</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (TeamTopFtpWeb.Models.BlobFolder directory in Model.FileStructure.SubDirectories)
+        {
+            <tr>
+                <td>
+                    <svg class="bi bi-folder" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.828 6a3 3 0 01-2.12-.879l-.83-.828A1 1 0 008.173 4H4.5a1 1 0 00-1 .981L3.546 6h-1L2.5 5a2 2 0 012-2h3.672a2 2 0 011.414.586l.828.828A2 2 0 0011.828 5v1z"></path>
+                        <path fill-rule="evenodd" d="M15.81 6H4.19a1 1 0 00-.996 1.09l.637 7a1 1 0 00.995.91h10.348a1 1 0 00.995-.91l.637-7A1 1 0 0015.81 6zM4.19 5a2 2 0 00-1.992 2.181l.637 7A2 2 0 004.826 16h10.348a2 2 0 001.991-1.819l.637-7A2 2 0 0015.81 5H4.19z" clip-rule="evenodd"></path>
+                    </svg>
+                    <a href="/@directory.Directory.Prefix">@directory.Directory.Prefix</a>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
+        @foreach (var file in Model.FileStructure.Files)
+        {
+            <tr>
+                <td>
+                   @if (file.Name.EndsWith(".zip") || file.Name.EndsWith(".ZIP"))
+                    {
+                        <svg class="bi bi-archive" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M4 7v7.5c0 .864.642 1.5 1.357 1.5h9.286c.715 0 1.357-.636 1.357-1.5V7h1v7.5c0 1.345-1.021 2.5-2.357 2.5H5.357C4.021 17 3 15.845 3 14.5V7h1z" clip-rule="evenodd"></path>
+                            <path fill-rule="evenodd" d="M7.5 9.5A.5.5 0 018 9h4a.5.5 0 010 1H8a.5.5 0 01-.5-.5zM17 4H3v2h14V4zM3 3a1 1 0 00-1 1v2a1 1 0 001 1h14a1 1 0 001-1V4a1 1 0 00-1-1H3z" clip-rule="evenodd"></path>
+                        </svg>
+                    }
+                    else if (file.Name.EndsWith(".mp4") || file.Name.EndsWith(".MP4"))
+                    {
+                <svg class="bi bi-camera-video-fill" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.667 5h6.666C12.253 5 13 5.746 13 6.667v6.666c0 .92-.746 1.667-1.667 1.667H4.667C3.747 15 3 14.254 3 13.333V6.667C3 5.747 3.746 5 4.667 5z"></path>
+                    <path d="M9.404 10.697l6.363 3.692c.54.313 1.233-.066 1.233-.697V6.308c0-.63-.692-1.01-1.233-.696L9.404 9.304a.802.802 0 000 1.393z"></path>
+                </svg>
+                    }
+                    else
+                    {
+                        <svg class="bi bi-image" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M16.002 4h-12a1 1 0 00-1 1v10a1 1 0 001 1h12a1 1 0 001-1V5a1 1 0 00-1-1zm-12-1a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2h-12z" clip-rule="evenodd"></path>
+                            <path d="M12.648 9.646a.5.5 0 01.577-.093l3.777 1.947V16h-14v-2l2.646-2.354a.5.5 0 01.63-.062l2.66 1.773 3.71-3.71z"></path>
+                            <path fill-rule="evenodd" d="M6.502 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" clip-rule="evenodd"></path>
+                        </svg>
+                    }
+
+                    <a href="/@file.Name">@file.Name</a>
+                </td>
+                <td>
+                    (@file.Properties.Length.BytesToString())
+                </td>
+                <td>
+                    <svg class="bi bi-cloud-download" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6.887 7.2l-.964-.165A2.5 2.5 0 105.5 12H8v1H5.5a3.5 3.5 0 11.59-6.95 5.002 5.002 0 119.804 1.98A2.501 2.501 0 0115.5 13H12v-1h3.5a1.5 1.5 0 00.237-2.981L14.7 8.854l.216-1.028a4 4 0 10-7.843-1.587l-.185.96z"></path>
+                        <path fill-rule="evenodd" d="M7 14.5a.5.5 0 01.707 0L10 16.793l2.293-2.293a.5.5 0 11.707.707l-2.646 2.647a.5.5 0 01-.708 0L7 15.207a.5.5 0 010-.707z" clip-rule="evenodd"></path>
+                        <path fill-rule="evenodd" d="M10 8a.5.5 0 01.5.5v8a.5.5 0 01-1 0v-8A.5.5 0 0110 8z" clip-rule="evenodd"></path>
+                    </svg>
+                    <a href="@file.Uri.AbsoluteUri">Download</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
