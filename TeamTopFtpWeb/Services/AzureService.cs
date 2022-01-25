@@ -252,7 +252,7 @@ namespace TeamTopFtpWeb.Services
             {
                 cacheEntry = GetRootFromBlobStorage();
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(DateTimeOffset.Now.AddDays(10)));
+                    .SetAbsoluteExpiration(DateTimeOffset.Now.AddDays(10));
 
                 _cache.Set(CACHEKEY, cacheEntry, cacheEntryOptions);
             }
