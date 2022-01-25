@@ -31,5 +31,11 @@ namespace TeamTopFtpWeb.Pages
             FileStructure = await _azureService.GetDataAsync(url);
             return Page();
         }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            _azureService.ForceCacheRefresh();
+            return new EmptyResult();
+        }
     }
 }
